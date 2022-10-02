@@ -4,7 +4,8 @@ const app = express();
 const admin = require("firebase-admin");
 const credentials = require("./fir-firebase-cb9e4-firebase-adminsdk-8oi2h-524a972666.json");
 const jwt = require('jsonwebtoken');
-const KEY = 'r3rewr'
+const KEY = 'r3rewr';
+require("dotenv").config();
 app.use(express.json());
 
 app.use(express.urlencoded({ extend: true }));
@@ -383,5 +384,5 @@ app.post('/items/add',(req,res)=>{
     });
 })
 
-const port = 9900;
+const port = process.env.PORT ||9900;
 app.listen(port, () => console.log(`server is running on port : ${port}`))
