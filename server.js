@@ -13,6 +13,57 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
+app.get("/",(req,res)=>{
+    res.json({
+        "/signup":{
+            method:"Post",
+            email:"String",
+            password:"String",
+            name:"String",
+            username:"String",
+            function:"لانشاء حساب جديد"
+
+        },
+        "/login":{
+            method:"Post",
+            email:"String",
+            password:"String",
+            function:"لتسجيل الدخول"
+        },
+        "/user":{
+            method:"Get",
+            username:"String",
+            function:"يعطيك بيانات غير حساسة عن المستخدم"
+        },
+        "/username":{
+            method:"Get",
+            token:"String",
+            function:"يعطيك معلومات  حساسة عن المستخدم"
+        },
+        "/items/delete":{
+            method:"Post",
+            token:"String",
+            id:"number",
+            function:"حذف دعاء من المستخدم"
+        },
+        "/items/add":{
+            method:"Post",
+            token:"String",
+            id:"number",
+            Function:"اضافه دعاء للمستخدم"
+        },
+        "/items":{
+            method:"Get",
+            Function:"يعطيك جميع الادعية في الموقع"
+        },
+        "/items/user":{
+            method:"Get",
+            token:"String",
+            Function:"يعطيك الادعية التي لم تقوم باضافتها"
+        }
+
+    })
+})
 /*
 لانشاء حساب جديد 
 المطلوب :
@@ -22,6 +73,7 @@ const db = admin.firestore();
 #username
 
 */
+
 app.post('/signup', async (req, res) => {
     const emailverify = db.collection("Users").doc(`${req.body.email}`);
     const emailresponse = await emailverify.get();
