@@ -5,8 +5,10 @@ const admin = require("firebase-admin");
 const credentials = require("./fir-firebase-cb9e4-firebase-adminsdk-8oi2h-524a972666.json");
 const jwt = require('jsonwebtoken');
 const KEY = 'r3rewr';
+const cors=require("cors")
 require("dotenv").config();
 app.use(express.json());
+app.use(cors())
 
 app.use(express.urlencoded({ extend: true }));
 admin.initializeApp({
@@ -139,17 +141,11 @@ app.post('/signup', async (req, res) => {
 لقراءة جميع البيانات
  */
 app.get('/read/all', async (req, res) => {
-    try {
-        const userRef = db.collection("users");
+
+        const userRef = db.collection("Users");
         const response = await userRef.get();
-        let responseArr = [];
-        response.forEach(doc => {
-            responseArr.push(doc.data());
-        });
-        res.send(responseArr)
-    } catch (error) {
-        res.send(error)
-    }
+        console.log(response);
+        res.send("done");
 })
 /*
 
@@ -311,7 +307,6 @@ app.get('/items/user',(req,res)=>{
                                 arr.push(DBitems[i]);
                             }
                         }
-
                    }
                    res.send({
                     result:arr
@@ -358,7 +353,6 @@ app.post('/items/add',(req,res)=>{
                             newarr.push(DBitems[i])
                         }
                     }
-                  
                     var newjson = userResponse.data();
                     newjson.items = newarr;
                     const o = db.collection("Users").doc(decoded.email).set(newjson);
@@ -383,6 +377,83 @@ app.post('/items/add',(req,res)=>{
         }
     });
 })
+app.post('/logout',(req,res)=>{
+    let token=req.header("Authorization");
+    const decoded = jwt.verify(token, KEY, async (err, decoded) => {
+        if (err) {
+            res.send(err)
+        }
+        else {
+            const userRef = db.collection("Users").doc(decoded.email);
+            const userResponse = await userRef.get();
+            if (userResponse.data()) {
+                if (userResponse.data().password === decoded.password) {
+                    var newjson=userResponse.data();
+                    jwt.sign({email:newjson.email,password:newjson.password},KEY,(err,newtoken)=>{
+                        if (err)throw err;
+                        newjson.token=newtoken;
+                        const o = db.collection("Users").doc(decoded.email).set(newjson);
+                    })
+                    res.send('dn')
+                } else {
+                    res.send('password is not currect');
+                }
+            } else {
+                res.send('user not register')
+            }
+
+        }
+    });
+})
+app.post('/items/edit',(req,res)=>{
+    let token=req.header("Authorization");
+    var number=req.body.number;
+    var id=req.body.id;
+    const decoded = jwt.verify(token, KEY, async (err, decoded) => {
+        if (err) {
+            res.send(err)
+        }
+        else {
+            const userRef = db.collection("Users").doc(decoded.email);
+            const userResponse = await userRef.get();
+            if (userResponse.data()) {
+                if (userResponse.data().password === decoded.password) {
+                    var idable=false;
+                    var numi=0;
+                    var itemsarr=userResponse.data().items;
+                    for (let i=0;i<itemsarr.length;i++){
+                        if (itemsarr[i].id==id){
+                            idable=true
+                            numi=i;
+                        }
+                    }
+                    if(idable){
+                        itemsarr[numi].number=number;
+                        if (number>0){
+                            itemsarr[numi].isSetNumber=true;
+                        }else{
+                            itemsarr[numi].isSetNumber=false;
+                        }
+                        var newjson=userResponse.data();
+                        newjson.items=itemsarr;
+                        const o = db.collection("Users").doc(decoded.email).set(newjson);
+                        res.json({msg:"تم التعديل بنجاح"})
+                    }else{
+                        res.send('الايدي غير موجود')
+                    }
+                    
+                } else {
+                    res.send('password is not currect');
+                }
+            } else {
+                res.send('user not register')
+            }
+
+        }
+    });
+
+        }
+    );
 
 const port = process.env.PORT ||9900;
 app.listen(port, () => console.log(`server is running on port : ${port}`))
