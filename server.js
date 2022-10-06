@@ -5,11 +5,12 @@ const admin = require("firebase-admin");
 const credentials = require("./fir-firebase-cb9e4-firebase-adminsdk-8oi2h-524a972666.json");
 const jwt = require('jsonwebtoken');
 const KEY = 'r3rewr';
+var bodyParser=require('body-parser')
 const cors=require("cors")
 require("dotenv").config();
 app.use(express.json());
 app.use(cors())
-app.use(express.bodyParser());
+app.use(bodyParser())
 app.use(express.urlencoded({ extend: true }));
 admin.initializeApp({
     credential: admin.credential.cert(credentials)
