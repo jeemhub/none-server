@@ -9,7 +9,7 @@ const cors=require("cors")
 require("dotenv").config();
 app.use(express.json());
 app.use(cors())
-
+app.use(express.bodyParser());
 app.use(express.urlencoded({ extend: true }));
 admin.initializeApp({
     credential: admin.credential.cert(credentials)
@@ -76,7 +76,9 @@ app.get("/",(req,res)=>{
 #username
 
 */
-
+app.get('/test12',(req,res)=>{
+    res.json({msg:"123123"});
+})
 app.post('/signup', async (req, res) => {
     const emailverify = db.collection("Users").doc(`${req.body.email}`);
     const emailresponse = await emailverify.get();
