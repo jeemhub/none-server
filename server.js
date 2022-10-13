@@ -133,7 +133,7 @@ app.post('/signup', async (req, res) => {
                 res.send("userName is regester")
             }
         } else {
-            res.send("email is regester")
+            res.json({msg:"تم انشاء حساب"})
         }
 
 
