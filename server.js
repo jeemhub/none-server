@@ -7,9 +7,9 @@ const jwt = require('jsonwebtoken');
 const KEY = 'r3rewr';
 var bodyParser = require('body-parser')
 const cors = require("cors")
+app.use(cors())
 require("dotenv").config();
 app.use(express.json());
-app.use(cors())
 app.use(bodyParser())
 app.use(express.urlencoded({ extend: true }));
 admin.initializeApp({
