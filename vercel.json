@@ -1,11 +1,13 @@
 {
     "version":2,
+    "buildCommand": "next build",
     "build":[
         {
             "src":"./server.js",
             "use":"@vercel/node"
         }
     ],
+    "cleanUrls": true,
     "routes":[
         {
         "src":"/(.*)",
